@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "tampermonkey",
+        "transifex"
+    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+}
