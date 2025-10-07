@@ -1,0 +1,35 @@
+.transifex-js-danger {
+  color: #fe5d65;
+}
+
+.transifex-js-danger:focus,
+.transifex-js-danger:hover {
+  color: #fe444d;
+}
+
+.transifex-js-mini-button {
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0 2px;
+  margin: 0 2px;
+  text-decoration: none;
+}
+
+.transifex-js-glossary-item-injection,
+.transifex-js-glossary-item-injection * {
+  transition: opacity 0.2s;
+}
+
+.transifex-js-close-to-show {
+  opacity: 0.2;
+}
+
+.transifex-js-close-to-show:focus,
+.transifex-js-close-to-show:hover {
+  opacity: 1;
+}
+
+.transifex-js-mini-button:focus,
+.transifex-js-mini-button:hover {
+  text-decoration: underline;
+}
