@@ -20,12 +20,12 @@ export class XHRSender {
         callback(data);
       },
       error: (xhr, options, err) => {
-        log("Request sending failed", e);
+        log("Request sending failed", err);
       },
     });
   }
 
-  static post(url, payload, callback) {
+  static post(url, payload, callback, additionalHeaders = {}) {
     if (this.debug) {
       log(`POST ${url} with payload ${JSON.stringify(payload)}`);
       callback("");
@@ -37,12 +37,16 @@ export class XHRSender {
       data: payload,
       processData: false,
       async: true,
-      beforeSend: (xhr) => {},
+      beforeSend: (xhr) => {
+        for (const [key, value] of Object.entries(additionalHeaders)) {
+          xhr.setRequestHeader(key, value);
+        }
+      },
       success: (data, status, xhr) => {
         callback(data);
       },
       error: (xhr, options, err) => {
-        log("Request sending failed", e);
+        log("Request sending failed", err);
       },
     });
   }

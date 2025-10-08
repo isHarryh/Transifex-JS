@@ -201,10 +201,9 @@ function receiveGlossaryMatch(json) {
   }, 500);
 
   const glossaryMatchApi =
-    /\/_\/editor\/ajax\/(.+)\/(.+)\/glossary_match\/.+\/(\d+)\/.+/g; // project, glossary_name, string_id
+    /\/_\/editor\/ajax\/(.+)\/(.+)\/glossary_match\/.+\/(\d+)\/.+/g; // org_name, project_name, string_id
 
-  XHRSpy.add(glossaryMatchApi, (json, url) => {
-    log(`Response JSON: ${JSON.stringify(json)}`);
+  XHRSpy.add(glossaryMatchApi, (json) => {
     receiveGlossaryMatch(json);
   });
 })();

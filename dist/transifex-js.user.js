@@ -39,11 +39,11 @@
           callback(data);
         },
         error: (xhr, options, err) => {
-          log("Request sending failed", e);
+          log("Request sending failed");
         }
       });
     }
-    static post(url, payload, callback) {
+    static post(url, payload, callback, additionalHeaders = {}) {
       if (this.debug) {
         log(`POST ${url} with payload ${JSON.stringify(payload)}`);
         callback("");
@@ -56,12 +56,15 @@
         processData: false,
         async: true,
         beforeSend: (xhr) => {
+          for (const [key, value] of Object.entries(additionalHeaders)) {
+            xhr.setRequestHeader(key, value);
+          }
         },
         success: (data, status, xhr) => {
           callback(data);
         },
         error: (xhr, options, err) => {
-          log("Request sending failed", e);
+          log("Request sending failed");
         }
       });
     }
@@ -122,6 +125,13 @@
     }
     return null;
   }
+  function getCsrfToken() {
+    const match = document.cookie.match(new RegExp("(^| )csrftoken=([^;]+)"));
+    if (match) {
+      return match[2];
+    }
+    return null;
+  }
   function deleteGlossaryItem(entityId, onSuccess) {
     const createGlossaryApi = getApiMapping("glossary_create_term");
     if (!createGlossaryApi) {
@@ -133,6 +143,10 @@
       log("Cannot determine source language");
       return;
     }
+    const csrfToken = getCsrfToken();
+    if (!csrfToken) {
+      log("Warning no CSRF token");
+    }
     const deleteSourceApi = createGlossaryApi.replace(
       "/glossary_term",
       `/string_operation/${sourceLanguage}/deletesource`
@@ -141,14 +155,19 @@
     JSON.stringify([{ source_entity__id: entityId }])
   )}`;
     log(`Deleting glossary item ${entityId} via ${deleteSourceApi}`);
-    XHRSender.post(deleteSourceApi, payload, (data) => {
-      if (data && data.includes("ok")) {
-        log("Deleted glossary item success");
-        onSuccess && onSuccess();
-      } else {
-        log(`Deleting glossary item failed: ${JSON.stringify(data)}`);
-      }
-    });
+    XHRSender.post(
+      deleteSourceApi,
+      payload,
+      (data) => {
+        if (data && data.includes("ok")) {
+          log("Deleted glossary item success");
+          onSuccess && onSuccess();
+        } else {
+          log(`Deleting glossary item failed: ${JSON.stringify(data)}`);
+        }
+      },
+      csrfToken ? { "x-csrftoken": csrfToken } : {}
+    );
   }
   function editGlossaryNote(entityId, newValue, onSuccess) {
     const projectName = getProjectName();
@@ -161,13 +180,22 @@
       log("Cannot determine source language");
       return;
     }
+    const csrfToken = getCsrfToken();
+    if (!csrfToken) {
+      log("Warning no CSRF token");
+    }
     const editNoteApi = `/_/glossary/ajax/${projectName}/translation_metadata/${sourceLanguage}/${entityId}`;
     const payload = JSON.stringify({ note: newValue });
     log(`Editing glossary note ${entityId} via ${editNoteApi}`);
-    XHRSender.post(editNoteApi, payload, (_data) => {
-      log("Edited glossary note success");
-      onSuccess && onSuccess();
-    });
+    XHRSender.post(
+      editNoteApi,
+      payload,
+      (_data) => {
+        log("Edited glossary note success");
+        onSuccess && onSuccess();
+      },
+      csrfToken ? { "x-csrftoken": csrfToken } : {}
+    );
   }
   function editGlossaryTranslationNote(entityId, newValue, onSuccess) {
     const projectName = getProjectName();
@@ -180,13 +208,22 @@
       log("Cannot determine target language");
       return;
     }
+    const csrfToken = getCsrfToken();
+    if (!csrfToken) {
+      log("Warning no CSRF token");
+    }
     const editNoteApi = `/_/glossary/ajax/${projectName}/translation_metadata/${targetLanguage}/${entityId}`;
     const payload = JSON.stringify({ note: newValue });
     log(`Editing glossary translation note ${entityId} via ${editNoteApi}`);
-    XHRSender.post(editNoteApi, payload, (_data) => {
-      log("Edited glossary translation note success");
-      onSuccess && onSuccess();
-    });
+    XHRSender.post(
+      editNoteApi,
+      payload,
+      (_data) => {
+        log("Edited glossary translation note success");
+        onSuccess && onSuccess();
+      },
+      csrfToken ? { "x-csrftoken": csrfToken } : {}
+    );
   }
   const dataStore = {
     activeGlossaryItems: []
@@ -332,8 +369,7 @@ This action is cannot be undone.`
       injectGlossaryArea();
     }, 500);
     const glossaryMatchApi = /\/_\/editor\/ajax\/(.+)\/(.+)\/glossary_match\/.+\/(\d+)\/.+/g;
-    XHRSpy.add(glossaryMatchApi, (json, url) => {
-      log(`Response JSON: ${JSON.stringify(json)}`);
+    XHRSpy.add(glossaryMatchApi, (json) => {
       receiveGlossaryMatch(json);
     });
   })();
