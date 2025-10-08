@@ -99,26 +99,26 @@
     }
   }
   function getApiMapping(key) {
-    if (window.Transifex && window.Transifex.objects && window.Transifex.objects.urls && window.Transifex.objects.urls.attributes) {
-      return window.Transifex.objects.urls.attributes[key];
+    if (Transifex && Transifex.objects && Transifex.objects.urls && Transifex.objects.urls.attributes) {
+      return Transifex.objects.urls.attributes[key];
     }
     return null;
   }
   function getSourceLanguage() {
-    if (window.Transifex && window.Transifex.objects && window.Transifex.objects.GA4EventsData) {
-      return window.Transifex.objects.GA4EventsData.source_language;
+    if (Transifex && Transifex.objects && Transifex.objects.GA4EventsData) {
+      return Transifex.objects.GA4EventsData.source_language;
     }
     return null;
   }
   function getTargetLanguage() {
-    if (window.Transifex && window.Transifex.objects && window.Transifex.objects.state && window.Transifex.objects.state.attributes) {
-      return window.Transifex.objects.state.attributes.lang_code;
+    if (Transifex && Transifex.objects && Transifex.objects.state && Transifex.objects.state.attributes) {
+      return Transifex.objects.state.attributes.lang_code;
     }
     return null;
   }
   function getProjectName() {
-    if (window.Transifex && window.Transifex.objects && window.Transifex.objects.state && window.Transifex.objects.state.attributes) {
-      return window.Transifex.objects.state.attributes.resource_slug;
+    if (Transifex && Transifex.objects && Transifex.objects.state && Transifex.objects.state.attributes) {
+      return Transifex.objects.state.attributes.resource_slug;
     }
     return null;
   }
@@ -153,7 +153,7 @@
   function editGlossaryNote(entityId, newValue, onSuccess) {
     const projectName = getProjectName();
     if (!projectName) {
-      log("Cannot determine glossary API");
+      log("Cannot determine project name");
       return;
     }
     const sourceLanguage = getSourceLanguage();
@@ -172,7 +172,7 @@
   function editGlossaryTranslationNote(entityId, newValue, onSuccess) {
     const projectName = getProjectName();
     if (!projectName) {
-      log("Cannot determine glossary API");
+      log("Cannot determine project name");
       return;
     }
     const targetLanguage = getTargetLanguage();
