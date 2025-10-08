@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Transifex-JS
 // @namespace    https://app.transifex.com/
-// @version      0.1.0
+// @version      0.1.1
 // @author       Harry Huang
 // @description  My Tampermonkey Script for Transifex
 // @license      MIT
