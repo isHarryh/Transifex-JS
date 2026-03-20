@@ -17,6 +17,18 @@ Adds an action bar to every glossary item you see in the "Glossary" side tab, pr
 
 ![Demo Glossary Item](./docs/imgs/demo-glossary-item.png)
 
+## Getting Started
+
+To install and use this script, follow these steps:
+
+1. Add the [Tampermonkey](https://www.tampermonkey.net/) extension to your browser.
+2. Open the file [dist/transifex-js.user.js](./dist/transifex-js.user.js) in this repository.
+3. There're two ways to install the script:
+   - Click the "Raw" button (in GitHub file page) to view the raw  code, then wait for Tampermonkey to prompt you to install the script.
+   - Alternatively, you can copy the entire content of that code file and paste it into a new script in the Tampermonkey dashboard.
+4. Enable "Developer Mode" in your browser's extension settings.
+5. Navigate to any Transifex editor page and enjoy it!
+
 ## Development
 
 ### Debug with hot-reload
