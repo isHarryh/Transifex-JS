@@ -4,6 +4,7 @@
 /// <reference types="vite-plugin-monkey/style" />
 
 declare const $: {
+  (selector: string | Element): any;
   ajax: (options: {
     type: "GET" | "POST";
     url: string;
