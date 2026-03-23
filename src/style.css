@@ -9,7 +9,7 @@
 
 .transifex-js-mini-button {
   cursor: pointer;
-  font-size: 10px;
+  font-size: 11px;
   padding: 0 2px;
   margin: 0 2px;
   text-decoration: none;
@@ -21,7 +21,7 @@
 }
 
 .transifex-js-close-to-show {
-  opacity: 0.2;
+  opacity: 0.6;
 }
 
 .transifex-js-close-to-show:focus,
@@ -32,4 +32,142 @@
 .transifex-js-mini-button:focus,
 .transifex-js-mini-button:hover {
   text-decoration: underline;
+}
+
+.transifex-js-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 13px;
+  line-height: 1.3;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.transifex-js-button:hover,
+.transifex-js-button:focus {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.transifex-js-button-danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.transifex-js-button-danger:hover,
+.transifex-js-button-danger:focus {
+  color: #991b1b;
+  border-color: #fca5a5;
+  background: #fee2e2;
+}
+
+.transifex-js-icon-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  color: #888899;
+}
+
+.transifex-js-icon {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.transifex-js-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 24, 0.45);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.transifex-js-modal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: min(78vh, 720px);
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.2);
+  color: #1f2937;
+}
+
+.transifex-js-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.transifex-js-modal-close:hover,
+.transifex-js-modal-close:focus {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.transifex-js-modal-content {
+  padding-top: 4px;
+}
+
+.transifex-js-modal-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.transifex-js-modal-meta {
+  margin: 4px 0 10px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.transifex-js-modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 13px;
+}
+
+.transifex-js-modal-table th,
+.transifex-js-modal-table td {
+  border-top: 1px solid #e5e7eb;
+  padding: 8px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.transifex-js-modal-table th {
+  width: 140px;
+  color: #374151;
+}
+
+.transifex-js-modal-action-cell {
+  width: 140px;
+  text-align: right;
+}
+
+.transifex-js-modal-table td {
+  word-break: break-word;
 }
