@@ -17,6 +17,10 @@ Adds an action bar to every glossary item you see in the "Glossary" side tab, pr
 
 ![Demo Glossary Item](./docs/imgs/demo-glossary-item.png)
 
+### Changelog
+
+View the [CHANGELOG.md](./CHANGELOG.md) file for a detailed list of changes and updates to this project.
+
 ## Getting Started
 
 To install and use this script, follow these steps:
@@ -31,13 +35,29 @@ To install and use this script, follow these steps:
 
 ## Development
 
+### Setup
+
+You should have [Node.js](https://nodejs.org/) installed on your machine and `pnpm` (or `npm`) available.
+
+Then, run the following command in this repository's root directory to install the dependencies:
+
+```bash
+pnpm install
+```
+
 ### Debug with hot-reload
+
+You should have Tampermonkey installed in your browser and enable "Developer Mode" in the extension settings.
+
+Then, run the following command to start the development server with hot-reload:
 
 ```bash
 pnpm dev
 ```
 
 ### Build
+
+To generate the distributable script file, run the following command:
 
 ```bash
 pnpm build
