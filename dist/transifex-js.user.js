@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Transifex-JS
 // @namespace    https://app.transifex.com/
-// @version      0.1.1
+// @version      0.2.0
 // @author       Harry Huang
 // @description  My Tampermonkey Script for Transifex
 // @license      MIT
@@ -228,54 +228,49 @@
   };
   function injectGlossaryArea() {
     function findGlossaryItemDivs() {
-      const glossaryArea = document.querySelector("#glossary-area");
-      if (!glossaryArea) {
+      const glossaryArea = $("#glossary-area");
+      if (!glossaryArea.length) {
         log("Not found glossary area");
         return;
       }
-      const glossaryListContainer = glossaryArea.querySelector(
-        'div[region="glossary-list"]'
-      );
-      if (!glossaryListContainer) {
+      const glossaryListContainer = glossaryArea.find('div[region="glossary-list"]').first();
+      if (!glossaryListContainer.length) {
         log("Not found glossary list container");
         return;
       }
-      const glossaryList = glossaryListContainer.querySelector("div");
-      if (!glossaryList) {
+      const glossaryList = glossaryListContainer.find("div").first();
+      if (!glossaryList.length) {
         log("Not found glossary list");
         return;
       }
-      const itemDivs2 = [];
-      for (const child of glossaryList.children) {
-        if (child instanceof HTMLDivElement && child.children.length) {
-          itemDivs2.push(child);
-        }
-      }
-      return itemDivs2;
+      return glossaryList.children().filter((_index, child) => child.children.length > 0).toArray().map((child) => $(child));
     }
     function injectGlossaryItem(itemDiv, glossaryItem) {
-      if (itemDiv.querySelector(".transifex-js-glossary-item-injection")) {
+      if (itemDiv.find(".transifex-js-glossary-item-injection").length) {
         return;
       }
       if (glossaryItem.deleted) {
         return;
       }
-      itemDiv.style.position = "relative";
-      const firstChild = itemDiv.children[0];
-      if (firstChild instanceof HTMLElement) {
-        firstChild.style.setProperty("padding-bottom", "18px", "important");
+      itemDiv.css("position", "relative");
+      const firstChild = itemDiv.children().first();
+      if (firstChild.length) {
+        firstChild.get(0).style.setProperty(
+          "padding-bottom",
+          "18px",
+          "important"
+        );
       }
-      const newDiv = document.createElement("div");
-      newDiv.classList = "transifex-js-glossary-item-injection transifex-js-close-to-show";
-      newDiv.style.position = "absolute";
-      newDiv.style.bottom = "0";
-      newDiv.style.left = "12px";
-      newDiv.style.padding = "2px";
-      newDiv.style.zIndex = "2";
-      const button1 = document.createElement("button");
-      button1.textContent = "Delete Term";
-      button1.classList = "transifex-js-mini-button transifex-js-danger";
-      button1.onclick = () => {
+      const newDiv = $("<div></div>").addClass(
+        "transifex-js-glossary-item-injection transifex-js-close-to-show"
+      ).css({
+        position: "absolute",
+        bottom: "0",
+        left: "12px",
+        padding: "2px",
+        zIndex: "2"
+      });
+      const button1 = $("<button></button>").text("Delete Term").addClass("transifex-js-mini-button transifex-js-danger").on("click", () => {
         if (confirm(
           `Sure to delete the glossary term "${glossaryItem.term}" (ID: ${glossaryItem.term_id}) from the glossary?
 This action is cannot be undone.`
@@ -287,48 +282,46 @@ This action is cannot be undone.`
               }
             }
             newDiv.remove();
-            itemDiv.style.color = "#88888888";
+            itemDiv.css("color", "#88888888");
           });
         }
-      };
-      const button2 = document.createElement("button");
-      button2.textContent = "Delete Term Note";
-      button2.classList = "transifex-js-mini-button transifex-js-danger";
-      button2.onclick = () => {
+      });
+      const button2 = $("<button></button>").text("Delete Term Note").addClass("transifex-js-mini-button transifex-js-danger").on("click", () => {
         if (confirm(
           `Sure to delete the note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`
         )) {
           editGlossaryNote(glossaryItem.term_id, "", () => {
-            for (const p of itemDiv.querySelectorAll("p")) {
-              if (p.textContent === glossaryItem.source_comment) {
-                p.style.textDecoration = "line-through";
-                p.style.color = "#88888888";
+            itemDiv.find("p").each((_idx, p) => {
+              const pElement = $(p);
+              if (pElement.text() === glossaryItem.source_comment) {
+                pElement.css({
+                  textDecoration: "line-through",
+                  color: "#88888888"
+                });
               }
-            }
+            });
           });
         }
-      };
-      const button3 = document.createElement("button");
-      button3.textContent = "Delete Translation Note";
-      button3.classList = "transifex-js-mini-button transifex-js-danger";
-      button3.onclick = () => {
+      });
+      const button3 = $("<button></button>").text("Delete Translation Note").addClass("transifex-js-mini-button transifex-js-danger").on("click", () => {
         if (confirm(
           `Sure to delete the translation note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`
         )) {
           editGlossaryTranslationNote(glossaryItem.term_id, "", () => {
-            for (const p of itemDiv.querySelectorAll("p")) {
-              if (p.textContent === glossaryItem.target_comment) {
-                p.style.textDecoration = "line-through";
-                p.style.color = "#88888888";
+            itemDiv.find("p").each((_idx, p) => {
+              const pElement = $(p);
+              if (pElement.text() === glossaryItem.target_comment) {
+                pElement.css({
+                  textDecoration: "line-through",
+                  color: "#88888888"
+                });
               }
-            }
+            });
           });
         }
-      };
-      newDiv.appendChild(button1);
-      newDiv.appendChild(button2);
-      newDiv.appendChild(button3);
-      itemDiv.insertBefore(newDiv, itemDiv.firstChild);
+      });
+      newDiv.append(button1, button2, button3);
+      itemDiv.prepend(newDiv);
     }
     const itemDivs = findGlossaryItemDivs();
     const activeGlossaryItems = dataStore.activeGlossaryItems;
@@ -340,7 +333,7 @@ This action is cannot be undone.`
         const itemDiv = itemDivs[i];
         const glossaryItem = dataStore.activeGlossaryItems[i];
         for (const variant of glossaryItem.term_variants) {
-          if (!itemDiv.innerHTML.includes(variant)) {
+          if (!itemDiv.html()?.includes(variant)) {
             log("Inconsistent glossary item content");
             return;
           }
