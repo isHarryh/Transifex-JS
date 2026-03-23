@@ -1,11 +1,11 @@
-export function log(msg) {
-  console.log(`[Transifex-JS] ${msg}`);
+export function log(...messages: unknown[]) {
+  console.log("[Transifex-JS]", ...messages);
 }
 
 export class XHRSender {
   static debug = false;
 
-  static get(url, callback) {
+  static get(url: string, callback: (data: unknown) => void) {
     if (this.debug) {
       log(`GET ${url}`);
       callback("");
@@ -13,19 +13,23 @@ export class XHRSender {
     }
     $.ajax({
       type: "GET",
-      url: url,
+      url,
       async: true,
-      beforeSend: (xhr) => {},
-      success: (data, status, xhr) => {
+      success: (data: unknown) => {
         callback(data);
       },
-      error: (xhr, options, err) => {
+      error: (_xhr: unknown, _options: unknown, err: unknown) => {
         log("Request sending failed", err);
       },
     });
   }
 
-  static post(url, payload, callback, additionalHeaders = {}) {
+  static post(
+    url: string,
+    payload: string,
+    callback: (data: unknown) => void,
+    additionalHeaders: Record<string, string> = {},
+  ) {
     if (this.debug) {
       log(`POST ${url} with payload ${JSON.stringify(payload)}`);
       callback("");
@@ -37,15 +41,15 @@ export class XHRSender {
       data: payload,
       processData: false,
       async: true,
-      beforeSend: (xhr) => {
+      beforeSend: (xhr: XMLHttpRequest) => {
         for (const [key, value] of Object.entries(additionalHeaders)) {
           xhr.setRequestHeader(key, value);
         }
       },
-      success: (data, status, xhr) => {
+      success: (data: unknown) => {
         callback(data);
       },
-      error: (xhr, options, err) => {
+      error: (_xhr: unknown, _options: unknown, err: unknown) => {
         log("Request sending failed", err);
       },
     });
@@ -53,22 +57,22 @@ export class XHRSender {
 }
 
 export class XHRSpy {
-  static listeners = [];
+  static listeners: Array<(xhr: XMLHttpRequest) => void> = [];
   static originalSend = XMLHttpRequest.prototype.send;
   static replacedSend = (XMLHttpRequest.prototype.send = function (...args) {
     const xhr = this;
     xhr.addEventListener("readystatechange", () =>
-      XHRSpy.listeners.forEach((l) => l(xhr))
+      XHRSpy.listeners.forEach((l) => l(xhr)),
     );
     return XHRSpy.originalSend.apply(xhr, args);
   });
 
-  static add(pathRegex, handler) {
+  static add(pathRegex: RegExp, handler: (json: unknown, url: URL) => void) {
     XHRSpy.listeners.push(function (xhr) {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-        let url = new URL(xhr.responseURL);
+        const url = new URL(xhr.responseURL);
         if (url.pathname.match(pathRegex)) {
-          let json;
+          let json: unknown;
           try {
             json = JSON.parse(xhr.responseText);
           } catch (err) {

@@ -21,7 +21,7 @@ export default defineConfig({
       },
     },
     monkey({
-      entry: "src/main.js",
+      entry: "src/main.ts",
       userscript: {
         name: "Transifex-JS",
         version: "0.1.1",

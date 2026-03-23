@@ -14,12 +14,12 @@
 (function () {
   'use strict';
 
-  const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):document.head.appendChild(document.createElement("style")).append(t);})(e));};
+  const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):(document.head||document.documentElement).appendChild(document.createElement("style")).append(t);})(e));};
 
   const styleCss = ".transifex-js-danger{color:#fe5d65}.transifex-js-danger:focus,.transifex-js-danger:hover{color:#fe444d}.transifex-js-mini-button{cursor:pointer;font-size:10px;padding:0 2px;margin:0 2px;text-decoration:none}.transifex-js-glossary-item-injection,.transifex-js-glossary-item-injection *{transition:opacity .2s}.transifex-js-close-to-show{opacity:.2}.transifex-js-close-to-show:focus,.transifex-js-close-to-show:hover{opacity:1}.transifex-js-mini-button:focus,.transifex-js-mini-button:hover{text-decoration:underline}";
   importCSS(styleCss);
-  function log(msg) {
-    console.log(`[Transifex-JS] ${msg}`);
+  function log(...messages) {
+    console.log("[Transifex-JS]", ...messages);
   }
   class XHRSender {
     static debug = false;
@@ -33,13 +33,11 @@
         type: "GET",
         url,
         async: true,
-        beforeSend: (xhr) => {
-        },
-        success: (data, status, xhr) => {
+        success: (data) => {
           callback(data);
         },
-        error: (xhr, options, err) => {
-          log("Request sending failed");
+        error: (_xhr, _options, err) => {
+          log("Request sending failed", err);
         }
       });
     }
@@ -60,11 +58,11 @@
             xhr.setRequestHeader(key, value);
           }
         },
-        success: (data, status, xhr) => {
+        success: (data) => {
           callback(data);
         },
-        error: (xhr, options, err) => {
-          log("Request sending failed");
+        error: (_xhr, _options, err) => {
+          log("Request sending failed", err);
         }
       });
     }
@@ -83,18 +81,18 @@
     static add(pathRegex, handler) {
       XHRSpy.listeners.push(function(xhr) {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-          let url = new URL(xhr.responseURL);
+          const url = new URL(xhr.responseURL);
           if (url.pathname.match(pathRegex)) {
             let json;
             try {
               json = JSON.parse(xhr.responseText);
             } catch (err) {
-              log("Response parsing failed");
+              log("Response parsing failed", err);
             }
             try {
               handler(json, url);
             } catch (err) {
-              log("Response handling failed");
+              log("Response handling failed", err);
             }
           }
         }
@@ -109,19 +107,19 @@
   }
   function getSourceLanguage() {
     if (Transifex && Transifex.objects && Transifex.objects.GA4EventsData) {
-      return Transifex.objects.GA4EventsData.source_language;
+      return Transifex.objects.GA4EventsData.source_language ?? null;
     }
     return null;
   }
   function getTargetLanguage() {
     if (Transifex && Transifex.objects && Transifex.objects.state && Transifex.objects.state.attributes) {
-      return Transifex.objects.state.attributes.lang_code;
+      return Transifex.objects.state.attributes.lang_code ?? null;
     }
     return null;
   }
   function getProjectName() {
     if (Transifex && Transifex.objects && Transifex.objects.state && Transifex.objects.state.attributes) {
-      return Transifex.objects.state.attributes.resource_slug;
+      return Transifex.objects.state.attributes.resource_slug ?? null;
     }
     return null;
   }
@@ -159,7 +157,7 @@
       deleteSourceApi,
       payload,
       (data) => {
-        if (data && data.includes("ok")) {
+        if (typeof data === "string" && data.includes("ok")) {
           log("Deleted glossary item success");
           onSuccess && onSuccess();
         } else {
@@ -247,9 +245,9 @@
         log("Not found glossary list");
         return;
       }
-      let itemDivs2 = [];
+      const itemDivs2 = [];
       for (const child of glossaryList.children) {
-        if (child.children.length) {
+        if (child instanceof HTMLDivElement && child.children.length) {
           itemDivs2.push(child);
         }
       }
@@ -263,11 +261,10 @@
         return;
       }
       itemDiv.style.position = "relative";
-      itemDiv.children[0].style.setProperty(
-        "padding-bottom",
-        "18px",
-        "important"
-      );
+      const firstChild = itemDiv.children[0];
+      if (firstChild instanceof HTMLElement) {
+        firstChild.style.setProperty("padding-bottom", "18px", "important");
+      }
       const newDiv = document.createElement("div");
       newDiv.classList = "transifex-js-glossary-item-injection transifex-js-close-to-show";
       newDiv.style.position = "absolute";
@@ -370,7 +367,9 @@ This action is cannot be undone.`
     }, 500);
     const glossaryMatchApi = /\/_\/editor\/ajax\/(.+)\/(.+)\/glossary_match\/.+\/(\d+)\/.+/g;
     XHRSpy.add(glossaryMatchApi, (json) => {
-      receiveGlossaryMatch(json);
+      if (json && typeof json === "object" && "matches" in json) {
+        receiveGlossaryMatch(json);
+      }
     });
   })();
 

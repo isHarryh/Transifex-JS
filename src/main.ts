@@ -1,13 +1,28 @@
 import "./style.css";
-import { log, XHRSpy } from "./utils.js";
+import { log, XHRSpy } from "./utils";
 import {
   deleteGlossaryItem,
   editGlossaryNote,
   editGlossaryTranslationNote,
-} from "./api.js";
+} from "./api";
+
+type GlossaryItem = {
+  term_id: number;
+  term: string;
+  term_variants: string[];
+  translation: string;
+  source_comment?: string;
+  target_comment?: string;
+  deleted?: boolean;
+};
+
+type GlossaryMatchResponse = {
+  can_add_term: boolean;
+  matches: GlossaryItem[];
+};
 
 const dataStore = {
-  activeGlossaryItems: [],
+  activeGlossaryItems: [] as GlossaryItem[],
 };
 
 function injectGlossaryArea() {
@@ -18,7 +33,7 @@ function injectGlossaryArea() {
       return;
     }
     const glossaryListContainer = glossaryArea.querySelector(
-      'div[region="glossary-list"]'
+      'div[region="glossary-list"]',
     );
     if (!glossaryListContainer) {
       log("Not found glossary list container");
@@ -30,9 +45,9 @@ function injectGlossaryArea() {
       return;
     }
 
-    let itemDivs = [];
+    const itemDivs: HTMLDivElement[] = [];
     for (const child of glossaryList.children) {
-      if (child.children.length) {
+      if (child instanceof HTMLDivElement && child.children.length) {
         itemDivs.push(child);
       }
     }
@@ -40,7 +55,10 @@ function injectGlossaryArea() {
     return itemDivs;
   }
 
-  function injectGlossaryItem(itemDiv, glossaryItem) {
+  function injectGlossaryItem(
+    itemDiv: HTMLDivElement,
+    glossaryItem: GlossaryItem,
+  ) {
     if (itemDiv.querySelector(".transifex-js-glossary-item-injection")) {
       return;
     }
@@ -49,11 +67,10 @@ function injectGlossaryArea() {
     }
 
     itemDiv.style.position = "relative";
-    itemDiv.children[0].style.setProperty(
-      "padding-bottom",
-      "18px",
-      "important"
-    );
+    const firstChild = itemDiv.children[0];
+    if (firstChild instanceof HTMLElement) {
+      firstChild.style.setProperty("padding-bottom", "18px", "important");
+    }
 
     const newDiv = document.createElement("div");
     newDiv.classList =
@@ -70,7 +87,7 @@ function injectGlossaryArea() {
     button1.onclick = () => {
       if (
         confirm(
-          `Sure to delete the glossary term "${glossaryItem.term}" (ID: ${glossaryItem.term_id}) from the glossary?\nThis action is cannot be undone.`
+          `Sure to delete the glossary term "${glossaryItem.term}" (ID: ${glossaryItem.term_id}) from the glossary?\nThis action is cannot be undone.`,
         )
       ) {
         deleteGlossaryItem(glossaryItem.term_id, () => {
@@ -92,12 +109,12 @@ function injectGlossaryArea() {
     button2.onclick = () => {
       if (
         confirm(
-          `Sure to delete the note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`
+          `Sure to delete the note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`,
         )
       ) {
         editGlossaryNote(glossaryItem.term_id, "", () => {
           // On success
-          for (const p of itemDiv.querySelectorAll("p")) {
+          for (const p of itemDiv.querySelectorAll<HTMLParagraphElement>("p")) {
             if (p.textContent === glossaryItem.source_comment) {
               p.style.textDecoration = "line-through";
               p.style.color = "#88888888";
@@ -113,12 +130,12 @@ function injectGlossaryArea() {
     button3.onclick = () => {
       if (
         confirm(
-          `Sure to delete the translation note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`
+          `Sure to delete the translation note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`,
         )
       ) {
         editGlossaryTranslationNote(glossaryItem.term_id, "", () => {
           // On success
-          for (const p of itemDiv.querySelectorAll("p")) {
+          for (const p of itemDiv.querySelectorAll<HTMLParagraphElement>("p")) {
             if (p.textContent === glossaryItem.target_comment) {
               p.style.textDecoration = "line-through";
               p.style.color = "#88888888";
@@ -167,7 +184,7 @@ function injectGlossaryArea() {
   }
 }
 
-function receiveGlossaryMatch(json) {
+function receiveGlossaryMatch(json: GlossaryMatchResponse) {
   /*
   json = {
     can_add_term: true,
@@ -204,6 +221,8 @@ function receiveGlossaryMatch(json) {
     /\/_\/editor\/ajax\/(.+)\/(.+)\/glossary_match\/.+\/(\d+)\/.+/g; // org_name, project_name, string_id
 
   XHRSpy.add(glossaryMatchApi, (json) => {
-    receiveGlossaryMatch(json);
+    if (json && typeof json === "object" && "matches" in json) {
+      receiveGlossaryMatch(json as GlossaryMatchResponse);
+    }
   });
 })();

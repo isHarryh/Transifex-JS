@@ -1,6 +1,18 @@
-import { log, XHRSender } from "./utils.js";
+import { log, XHRSender } from "./utils";
 
-function getApiMapping(key) {
+type ProjectSettings = {
+  project: string;
+  glossaryName: string;
+  sourceLanguage: string;
+};
+
+const projectSettings: ProjectSettings = {
+  project: "",
+  glossaryName: "",
+  sourceLanguage: "",
+};
+
+function getApiMapping(key: string): string | null {
   if (
     Transifex &&
     Transifex.objects &&
@@ -12,38 +24,38 @@ function getApiMapping(key) {
   return null;
 }
 
-function getSourceLanguage() {
+function getSourceLanguage(): string | null {
   if (Transifex && Transifex.objects && Transifex.objects.GA4EventsData) {
-    return Transifex.objects.GA4EventsData.source_language;
+    return Transifex.objects.GA4EventsData.source_language ?? null;
   }
   return null;
 }
 
-function getTargetLanguage() {
+function getTargetLanguage(): string | null {
   if (
     Transifex &&
     Transifex.objects &&
     Transifex.objects.state &&
     Transifex.objects.state.attributes
   ) {
-    return Transifex.objects.state.attributes.lang_code;
+    return Transifex.objects.state.attributes.lang_code ?? null;
   }
   return null;
 }
 
-function getProjectName() {
+function getProjectName(): string | null {
   if (
     Transifex &&
     Transifex.objects &&
     Transifex.objects.state &&
     Transifex.objects.state.attributes
   ) {
-    return Transifex.objects.state.attributes.resource_slug;
+    return Transifex.objects.state.attributes.resource_slug ?? null;
   }
   return null;
 }
 
-function getCsrfToken() {
+function getCsrfToken(): string | null {
   const match = document.cookie.match(new RegExp("(^| )csrftoken=([^;]+)"));
   if (match) {
     return match[2];
@@ -51,7 +63,11 @@ function getCsrfToken() {
   return null;
 }
 
-export function setGlossaryConfig(project, glossaryName, sourceLanguage) {
+export function setGlossaryConfig(
+  project: string,
+  glossaryName: string,
+  sourceLanguage: string,
+) {
   projectSettings.project = project;
   projectSettings.glossaryName = glossaryName;
   projectSettings.sourceLanguage = sourceLanguage;
@@ -61,7 +77,7 @@ export function setGlossaryConfig(project, glossaryName, sourceLanguage) {
 //   // POST /_/glossary/ajax/{project}/{glossary_name}/glossary_term/
 // }
 
-export function deleteGlossaryItem(entityId, onSuccess) {
+export function deleteGlossaryItem(entityId: number, onSuccess?: () => void) {
   // POST /_/editor/ajax/{project}/{glossary_name}/string_operation/{source_language}/deletesource/
   // Payload: data=[{"source_entity__id":number_id}] // should be URL encoded
   const createGlossaryApi = getApiMapping("glossary_create_term");
@@ -82,29 +98,33 @@ export function deleteGlossaryItem(entityId, onSuccess) {
   const deleteSourceApi = createGlossaryApi
     .replace(
       "/glossary_term",
-      `/string_operation/${sourceLanguage}/deletesource`
+      `/string_operation/${sourceLanguage}/deletesource`,
     )
     .replace("/_/glossary", "/_/editor");
   const payload = `data=${encodeURIComponent(
-    JSON.stringify([{ source_entity__id: entityId }])
+    JSON.stringify([{ source_entity__id: entityId }]),
   )}`;
   log(`Deleting glossary item ${entityId} via ${deleteSourceApi}`);
   XHRSender.post(
     deleteSourceApi,
     payload,
     (data) => {
-      if (data && data.includes("ok")) {
+      if (typeof data === "string" && data.includes("ok")) {
         log("Deleted glossary item success");
         onSuccess && onSuccess();
       } else {
         log(`Deleting glossary item failed: ${JSON.stringify(data)}`);
       }
     },
-    csrfToken ? { "x-csrftoken": csrfToken } : {}
+    csrfToken ? { "x-csrftoken": csrfToken } : {},
   );
 }
 
-export function editGlossaryNote(entityId, newValue, onSuccess) {
+export function editGlossaryNote(
+  entityId: number,
+  newValue: string,
+  onSuccess?: () => void,
+) {
   // POST /_/glossary/ajax/{project}/translation_metadata/{source_language}/{id}
   // Payload: {note: "new note value string"} // as normal json
   const projectName = getProjectName();
@@ -128,15 +148,19 @@ export function editGlossaryNote(entityId, newValue, onSuccess) {
   XHRSender.post(
     editNoteApi,
     payload,
-    (_data) => {
+    (_data: unknown) => {
       log("Edited glossary note success");
       onSuccess && onSuccess();
     },
-    csrfToken ? { "x-csrftoken": csrfToken } : {}
+    csrfToken ? { "x-csrftoken": csrfToken } : {},
   );
 }
 
-export function editGlossaryTranslationNote(entityId, newValue, onSuccess) {
+export function editGlossaryTranslationNote(
+  entityId: number,
+  newValue: string,
+  onSuccess?: () => void,
+) {
   // POST /_/glossary/ajax/{project}/translation_metadata/{target_language}/{id}
   // Payload: {note: "new note value string"} // as normal json
   const projectName = getProjectName();
@@ -160,10 +184,10 @@ export function editGlossaryTranslationNote(entityId, newValue, onSuccess) {
   XHRSender.post(
     editNoteApi,
     payload,
-    (_data) => {
+    (_data: unknown) => {
       log("Edited glossary translation note success");
       onSuccess && onSuccess();
     },
-    csrfToken ? { "x-csrftoken": csrfToken } : {}
+    csrfToken ? { "x-csrftoken": csrfToken } : {},
   );
 }
