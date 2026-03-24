@@ -9,13 +9,15 @@ This Tampermonkey user script is designed to enhance the user experience on the 
 
 ### Features
 
-Adds an action bar to every glossary item you see in the "Glossary" side tab, providing quick access to:
+Adds an "Edit" button to every glossary item you see in the "Glossary" side tab, providing quick access to:
 
 - Delete a glossary item
 - Delete the source note of a glossary item
 - Delete the translation note of a glossary item
 
-![Demo Glossary Item](./docs/imgs/demo-glossary-item.png)
+|                       Edit Button Demo                       |                       Edit Dialog Demo                       |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![Edit Button Demo](docs/imgs/demo-glossary-edit-button.png) | ![Edit Dialog Demo](docs/imgs/demo-glossary-edit-dialog.png) |
 
 ### Changelog
 
