@@ -1,3 +1,17 @@
+## v0.3.0 (2026-03-24)
+
+### Features
+
+- Adds **glossary term edit dialog**.
+
+### Refactors
+
+- Separates code files.
+
+### Deprecations
+
+- Removed the glossary term action bar, as it's no longer needed with the new edit dialog.
+
 ## v0.2.0 (2026-03-23)
 
 ### Refactors
