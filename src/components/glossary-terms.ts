@@ -24,6 +24,119 @@ const dataStore = {
   activeGlossaryItems: [] as GlossaryItem[],
 };
 
+function createNoteRow(
+  label: string,
+  initialNote: string | undefined,
+  onSave: (newValue: string, callback: () => void) => void,
+) {
+  const tr = $("<tr></tr>");
+  const th = $("<th></th>").text(label);
+  const tdContent = $("<td></td>");
+  const tdActions = $("<td></td>")
+    .addClass("transifex-js-modal-action-cell")
+    .css("white-space", "nowrap");
+
+  let isEditing = false;
+  let currentNote = initialNote?.trim() || "";
+
+  const renderContent = () => {
+    tdContent.empty();
+    tdActions.empty();
+
+    if (isEditing) {
+      const textarea = $("<textarea></textarea>")
+        .addClass("transifex-js-input")
+        .val(currentNote);
+      tdContent.append(textarea);
+
+      const saveBtn = $('<button type="button"></button>')
+        .addClass("transifex-js-button transifex-js-button-primary")
+        .append(icon("done", 24))
+        .append("<span>Save</span>")
+        .on("click", () => {
+          const newVal = (textarea.val() as string).trim();
+          saveBtn.prop("disabled", true);
+          onSave(newVal, () => {
+            currentNote = newVal;
+            isEditing = false;
+            renderContent();
+          });
+        });
+
+      const cancelBtn = $('<button type="button"></button>')
+        .addClass("transifex-js-button")
+        .append(icon("cancel", 24))
+        .append("<span>Cancel</span>")
+        .css("margin-left", "4px")
+        .on("click", () => {
+          isEditing = false;
+          renderContent();
+        });
+
+      tdActions.append(saveBtn, cancelBtn);
+    } else {
+      tdContent.text(currentNote || "-");
+
+      const editBtn = $('<button type="button"></button>')
+        .addClass("transifex-js-button")
+        .append(icon("edit", 24))
+        .append("<span>Edit</span>")
+        .on("click", () => {
+          isEditing = true;
+          renderContent();
+        });
+
+      const clearBtn = $('<button type="button"></button>')
+        .addClass("transifex-js-button transifex-js-button-danger")
+        .append(icon("clear", 24))
+        .append("<span>Clear</span>")
+        .css("margin-left", "4px")
+        .on("click", () => {
+          if (confirm(`Sure to clear the ${label.toLowerCase()}?`)) {
+            clearBtn.prop("disabled", true);
+            onSave("", () => {
+              currentNote = "";
+              renderContent();
+            });
+          }
+        });
+
+      tdActions.append(editBtn, clearBtn);
+    }
+  };
+
+  renderContent();
+  tr.append(th, tdContent, tdActions);
+  return tr;
+}
+
+function updateItemDivText(
+  itemDiv: any,
+  oldVal: string | undefined,
+  newVal: string,
+) {
+  let found = false;
+  if (oldVal) {
+    itemDiv.find("p").each((_idx: number, p: Element) => {
+      const pElement = $(p);
+      if (pElement.text() === oldVal) {
+        found = true;
+        pElement.text(newVal);
+        pElement.css({ textDecoration: "", color: "" });
+        if (!newVal) {
+          pElement.css({ textDecoration: "line-through", color: "#88888888" });
+        }
+      }
+    });
+  }
+  if (!found && newVal) {
+    const firstChild = itemDiv.children().first();
+    if (firstChild.length) {
+      firstChild.append($("<p></p>").text(newVal));
+    }
+  }
+}
+
 function showGlossaryModal(
   itemDiv: any,
   glossaryItem: GlossaryItem,
@@ -31,8 +144,6 @@ function showGlossaryModal(
 ) {
   const titleId = `transifex-js-dialog-title-${glossaryItem.term_id}`;
   const termText = glossaryItem.term?.trim() || "-";
-  const sourceNoteText = glossaryItem.source_comment?.trim() || "-";
-  const targetNoteText = glossaryItem.target_comment?.trim() || "-";
 
   const dialog = new ModelDialog({ closeOnEsc: true, closeOnOverlay: true });
   const modal = $("<div></div>").attr({
@@ -77,59 +188,31 @@ function showGlossaryModal(
       }
     });
 
-  const clearSourceNoteButton = $('<button type="button"></button>')
-    .append(icon("clear", 24))
-    .append("<span>Clear</span>")
-    .addClass("transifex-js-button transifex-js-button-danger")
-    .on("click", () => {
-      if (
-        confirm(
-          `Sure to delete the note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`,
-        )
-      ) {
-        const oldSourceComment = glossaryItem.source_comment;
-        editGlossaryNote(glossaryItem.term_id, "", () => {
-          glossaryItem.source_comment = "";
-          itemDiv.find("p").each((_idx: number, p: Element) => {
-            const pElement = $(p);
-            if (oldSourceComment && pElement.text() === oldSourceComment) {
-              pElement.css({
-                textDecoration: "line-through",
-                color: "#88888888",
-              });
-            }
-          });
-          closeModal();
-        });
-      }
-    });
+  const sourceNoteRow = createNoteRow(
+    "Source Note",
+    glossaryItem.source_comment,
+    (newValue, callback) => {
+      const oldVal = glossaryItem.source_comment;
+      editGlossaryNote(glossaryItem.term_id, newValue, () => {
+        glossaryItem.source_comment = newValue;
+        updateItemDivText(itemDiv, oldVal, newValue);
+        callback();
+      });
+    },
+  );
 
-  const clearTargetNoteButton = $('<button type="button"></button>')
-    .append(icon("clear", 24))
-    .append("<span>Clear</span>")
-    .addClass("transifex-js-button transifex-js-button-danger")
-    .on("click", () => {
-      if (
-        confirm(
-          `Sure to delete the translation note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`,
-        )
-      ) {
-        const oldTargetComment = glossaryItem.target_comment;
-        editGlossaryTranslationNote(glossaryItem.term_id, "", () => {
-          glossaryItem.target_comment = "";
-          itemDiv.find("p").each((_idx: number, p: Element) => {
-            const pElement = $(p);
-            if (oldTargetComment && pElement.text() === oldTargetComment) {
-              pElement.css({
-                textDecoration: "line-through",
-                color: "#88888888",
-              });
-            }
-          });
-          closeModal();
-        });
-      }
-    });
+  const targetNoteRow = createNoteRow(
+    "Translation Note",
+    glossaryItem.target_comment,
+    (newValue, callback) => {
+      const oldVal = glossaryItem.target_comment;
+      editGlossaryTranslationNote(glossaryItem.term_id, newValue, () => {
+        glossaryItem.target_comment = newValue;
+        updateItemDivText(itemDiv, oldVal, newValue);
+        callback();
+      });
+    },
+  );
 
   body.append(
     $("<tr></tr>").append(
@@ -137,22 +220,11 @@ function showGlossaryModal(
       $("<td></td>").text(termText),
       $("<td></td>")
         .addClass("transifex-js-modal-action-cell")
+        .css("white-space", "nowrap")
         .append(deleteTermButton),
     ),
-    $("<tr></tr>").append(
-      $("<th></th>").text("Source Note"),
-      $("<td></td>").text(sourceNoteText),
-      $("<td></td>")
-        .addClass("transifex-js-modal-action-cell")
-        .append(clearSourceNoteButton),
-    ),
-    $("<tr></tr>").append(
-      $("<th></th>").text("Translation Note"),
-      $("<td></td>").text(targetNoteText),
-      $("<td></td>")
-        .addClass("transifex-js-modal-action-cell")
-        .append(clearTargetNoteButton),
-    ),
+    sourceNoteRow,
+    targetNoteRow,
   );
 
   table.append(body);

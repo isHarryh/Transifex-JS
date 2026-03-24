@@ -54,6 +54,19 @@
   border-color: #9ca3af;
 }
 
+.transifex-js-button-primary {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.transifex-js-button-primary:hover,
+.transifex-js-button-primary:focus {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
 .transifex-js-button-danger {
   color: #b91c1c;
   border-color: #fecaca;
@@ -170,4 +183,23 @@
 
 .transifex-js-modal-table td {
   word-break: break-word;
+}
+
+.transifex-js-input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 48px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  outline: none;
+}
+
+.transifex-js-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
 }
