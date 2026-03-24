@@ -10,6 +10,7 @@ export class ModelDialog {
   private readonly overlay: any;
   private readonly panel: any;
   private readonly contentHost: any;
+  private readonly footer: any;
   private readonly closeButton: any;
   private readonly eventNamespace: string;
   private opened = false;
@@ -31,7 +32,12 @@ export class ModelDialog {
       .text("x")
       .on("click", () => this.close());
     this.contentHost = $("<div></div>").addClass("transifex-js-modal-content");
-    this.panel.append(this.closeButton, this.contentHost);
+    this.footer = $("<div></div>")
+      .addClass("transifex-js-modal-footer")
+      .html(
+        'Powered by <a href="https://github.com/isHarryh/Transifex-JS" target="_blank" rel="noopener noreferrer">Transifex-JS</a>',
+      );
+    this.panel.append(this.closeButton, this.contentHost, this.footer);
     this.overlay.attr("aria-hidden", "true");
     this.panel.attr("tabindex", "-1");
     this.eventNamespace = `.transifexDialog${Date.now()}${Math.floor(Math.random() * 10000)}`;

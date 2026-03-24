@@ -154,7 +154,7 @@ function showGlossaryModal(
   const title = $("<h3></h3>")
     .addClass("transifex-js-modal-title")
     .attr("id", titleId)
-    .text("Transifex-JS: Edit Glossary Term");
+    .text("Edit Glossary Term");
   const meta = $("<p></p>")
     .addClass("transifex-js-modal-meta")
     .text(`ID: ${glossaryItem.term_id}`);
