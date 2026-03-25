@@ -24,7 +24,7 @@ export default defineConfig({
       entry: "src/main.ts",
       userscript: {
         name: "Transifex-JS",
-        version: "0.3.0",
+        version: "0.4.0",
         description: "My Tampermonkey Script for Transifex",
         author: "Harry Huang",
         license: "MIT",

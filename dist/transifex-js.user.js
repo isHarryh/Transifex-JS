@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Transifex-JS
 // @namespace    https://app.transifex.com/
-// @version      0.3.0
+// @version      0.4.0
 // @author       Harry Huang
 // @description  My Tampermonkey Script for Transifex
 // @license      MIT
@@ -16,9 +16,9 @@
 
   const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):(document.head||document.documentElement).appendChild(document.createElement("style")).append(t);})(e));};
 
-  const styleCss = ".transifex-js-danger{color:#fe5d65}.transifex-js-danger:focus,.transifex-js-danger:hover{color:#fe444d}.transifex-js-mini-button{cursor:pointer;font-size:11px;padding:0 2px;margin:0 2px;text-decoration:none}.transifex-js-glossary-item-injection,.transifex-js-glossary-item-injection *{transition:opacity .2s}.transifex-js-close-to-show{opacity:.6}.transifex-js-close-to-show:focus,.transifex-js-close-to-show:hover{opacity:1}.transifex-js-mini-button:focus,.transifex-js-mini-button:hover{text-decoration:underline}.transifex-js-button{display:inline-flex;align-items:center;gap:4px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#1f2937;font-size:13px;line-height:1.3;padding:4px 8px;cursor:pointer}.transifex-js-button:hover,.transifex-js-button:focus{background:#f9fafb;border-color:#9ca3af}.transifex-js-button-danger{color:#b91c1c;border-color:#fecaca;background:#fef2f2}.transifex-js-button-danger:hover,.transifex-js-button-danger:focus{color:#991b1b;border-color:#fca5a5;background:#fee2e2}.transifex-js-icon-button{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;color:#889}.transifex-js-icon{width:12px;height:12px;fill:currentColor}.transifex-js-modal-overlay{position:fixed;inset:0;background:#14141873;z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px}.transifex-js-modal{position:relative;width:min(560px,100%);max-height:min(78vh,720px);overflow:auto;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px;box-shadow:0 14px 40px #0003;color:#1f2937}.transifex-js-modal-close{position:absolute;top:8px;right:8px;border:0;width:24px;height:24px;border-radius:4px;background:transparent;color:#6b7280;cursor:pointer;font-size:18px;line-height:1}.transifex-js-modal-close:hover,.transifex-js-modal-close:focus{background:#f3f4f6;color:#111827}.transifex-js-modal-content{padding-top:4px}.transifex-js-modal-title{margin:0;font-size:16px;line-height:1.3}.transifex-js-modal-meta{margin:4px 0 10px;color:#6b7280;font-size:13px}.transifex-js-modal-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}.transifex-js-modal-table th,.transifex-js-modal-table td{border-top:1px solid #e5e7eb;padding:8px 6px;text-align:left;vertical-align:top}.transifex-js-modal-table th{width:140px;color:#374151}.transifex-js-modal-action-cell{width:140px;text-align:right}.transifex-js-modal-table td{word-break:break-word}";
+  const styleCss = ".transifex-js-danger{color:#fe5d65}.transifex-js-danger:focus,.transifex-js-danger:hover{color:#fe444d}.transifex-js-mini-button{cursor:pointer;font-size:11px;padding:0 2px;margin:0 2px;text-decoration:none}.transifex-js-glossary-item-injection,.transifex-js-glossary-item-injection *{transition:opacity .2s}.transifex-js-close-to-show{opacity:.6}.transifex-js-close-to-show:focus,.transifex-js-close-to-show:hover{opacity:1}.transifex-js-mini-button:focus,.transifex-js-mini-button:hover{text-decoration:underline}.transifex-js-button{display:inline-flex;align-items:center;gap:4px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#1f2937;font-size:13px;line-height:1.3;padding:4px 8px;cursor:pointer}.transifex-js-button:hover,.transifex-js-button:focus{background:#f9fafb;border-color:#9ca3af}.transifex-js-button-primary{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}.transifex-js-button-primary:hover,.transifex-js-button-primary:focus{background:#dbeafe;border-color:#93c5fd;color:#1e40af}.transifex-js-button-danger{color:#b91c1c;border-color:#fecaca;background:#fef2f2}.transifex-js-button-danger:hover,.transifex-js-button-danger:focus{color:#991b1b;border-color:#fca5a5;background:#fee2e2}.transifex-js-icon-button{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;color:#889}.transifex-js-icon{width:12px;height:12px;fill:currentColor}.transifex-js-modal-overlay{position:fixed;inset:0;background:#14141873;z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px}.transifex-js-modal{position:relative;width:min(560px,100%);max-height:min(78vh,720px);overflow:auto;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px;box-shadow:0 14px 40px #0003;color:#1f2937}.transifex-js-modal-close{position:absolute;top:8px;right:8px;border:0;width:24px;height:24px;border-radius:4px;background:transparent;color:#6b7280;cursor:pointer;font-size:18px;line-height:1}.transifex-js-modal-close:hover,.transifex-js-modal-close:focus{background:#f3f4f6;color:#111827}.transifex-js-modal-content{padding-top:4px}.transifex-js-modal-title{margin:0;font-size:16px;line-height:1.3}.transifex-js-modal-meta{margin:4px 0 10px;color:#6b7280;font-size:13px}.transifex-js-modal-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}.transifex-js-modal-table th,.transifex-js-modal-table td{border-top:1px solid #e5e7eb;padding:8px 6px;text-align:left;vertical-align:top}.transifex-js-modal-table th{width:140px;color:#374151}.transifex-js-modal-action-cell{width:140px;text-align:right}.transifex-js-modal-table td{word-break:break-word}.transifex-js-input{width:100%;box-sizing:border-box;resize:vertical;min-height:48px;border:1px solid #d1d5db;border-radius:4px;padding:6px 8px;font-family:inherit;font-size:13px;line-height:1.4;outline:none}.transifex-js-input:focus{border-color:#3b82f6;box-shadow:0 0 0 1px #3b82f6}.transifex-js-modal-footer{margin-top:16px;padding-top:12px;border-top:1px solid #f3f4f6;font-size:12px;color:#9ca3af;text-align:left}.transifex-js-modal-footer a{color:#6b7280;text-decoration:none}.transifex-js-modal-footer a:hover{color:#374151;text-decoration:underline}";
   importCSS(styleCss);
-  const iconsCss = '.transifex-js-icon-clear path{d:path("M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z")}.transifex-js-icon-delete path{d:path("M14.12 10.47L12 12.59l-2.13-2.12-1.41 1.41L10.59 14l-2.12 2.12 1.41 1.41L12 15.41l2.12 2.12 1.41-1.41L13.41 14l2.12-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9z")}.transifex-js-icon-edit path{d:path("M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z")}';
+  const iconsCss = '.transifex-js-icon-cancel path{d:path("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z")}.transifex-js-icon-clear path{d:path("M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z")}.transifex-js-icon-delete path{d:path("M14.12 10.47L12 12.59l-2.13-2.12-1.41 1.41L10.59 14l-2.12 2.12 1.41 1.41L12 15.41l2.12 2.12 1.41-1.41L13.41 14l2.12-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9z")}.transifex-js-icon-done path{d:path("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")}.transifex-js-icon-edit path{d:path("M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z")}';
   importCSS(iconsCss);
   function log(...messages) {
     console.log("[Transifex-JS]", ...messages);
@@ -109,6 +109,7 @@
     overlay;
     panel;
     contentHost;
+    footer;
     closeButton;
     eventNamespace;
     opened = false;
@@ -124,7 +125,10 @@
       this.panel = $("<div></div>").addClass(this.options.panelClassName);
       this.closeButton = $('<button type="button"></button>').addClass("transifex-js-modal-close").attr("aria-label", "Close dialog").text("x").on("click", () => this.close());
       this.contentHost = $("<div></div>").addClass("transifex-js-modal-content");
-      this.panel.append(this.closeButton, this.contentHost);
+      this.footer = $("<div></div>").addClass("transifex-js-modal-footer").html(
+        'Powered by <a href="https://github.com/isHarryh/Transifex-JS" target="_blank" rel="noopener noreferrer">Transifex-JS</a>'
+      );
+      this.panel.append(this.closeButton, this.contentHost, this.footer);
       this.overlay.attr("aria-hidden", "true");
       this.panel.attr("tabindex", "-1");
       this.eventNamespace = `.transifexDialog${Date.now()}${Math.floor(Math.random() * 1e4)}`;
@@ -326,18 +330,87 @@
   const dataStore = {
     activeGlossaryItems: []
   };
+  function createNoteRow(label, initialNote, onSave) {
+    const tr = $("<tr></tr>");
+    const th = $("<th></th>").text(label);
+    const tdContent = $("<td></td>");
+    const tdActions = $("<td></td>").addClass("transifex-js-modal-action-cell").css("white-space", "nowrap");
+    let isEditing = false;
+    let currentNote = initialNote?.trim() || "";
+    const renderContent = () => {
+      tdContent.empty();
+      tdActions.empty();
+      if (isEditing) {
+        const textarea = $("<textarea></textarea>").addClass("transifex-js-input").val(currentNote);
+        tdContent.append(textarea);
+        const saveBtn = $('<button type="button"></button>').addClass("transifex-js-button transifex-js-button-primary").append(icon("done", 24)).append("<span>Save</span>").on("click", () => {
+          const newVal = textarea.val().trim();
+          saveBtn.prop("disabled", true);
+          onSave(newVal, () => {
+            currentNote = newVal;
+            isEditing = false;
+            renderContent();
+          });
+        });
+        const cancelBtn = $('<button type="button"></button>').addClass("transifex-js-button").append(icon("cancel", 24)).append("<span>Cancel</span>").css("margin-left", "4px").on("click", () => {
+          isEditing = false;
+          renderContent();
+        });
+        tdActions.append(saveBtn, cancelBtn);
+      } else {
+        tdContent.text(currentNote || "-");
+        const editBtn = $('<button type="button"></button>').addClass("transifex-js-button").append(icon("edit", 24)).append("<span>Edit</span>").on("click", () => {
+          isEditing = true;
+          renderContent();
+        });
+        const clearBtn = $('<button type="button"></button>').addClass("transifex-js-button transifex-js-button-danger").append(icon("clear", 24)).append("<span>Clear</span>").css("margin-left", "4px").on("click", () => {
+          if (confirm(`Sure to clear the ${label.toLowerCase()}?`)) {
+            clearBtn.prop("disabled", true);
+            onSave("", () => {
+              currentNote = "";
+              renderContent();
+            });
+          }
+        });
+        tdActions.append(editBtn, clearBtn);
+      }
+    };
+    renderContent();
+    tr.append(th, tdContent, tdActions);
+    return tr;
+  }
+  function updateItemDivText(itemDiv, oldVal, newVal) {
+    let found = false;
+    if (oldVal) {
+      itemDiv.find("p").each((_idx, p) => {
+        const pElement = $(p);
+        if (pElement.text() === oldVal) {
+          found = true;
+          pElement.text(newVal);
+          pElement.css({ textDecoration: "", color: "" });
+          if (!newVal) {
+            pElement.css({ textDecoration: "line-through", color: "#88888888" });
+          }
+        }
+      });
+    }
+    if (!found && newVal) {
+      const firstChild = itemDiv.children().first();
+      if (firstChild.length) {
+        firstChild.append($("<p></p>").text(newVal));
+      }
+    }
+  }
   function showGlossaryModal(itemDiv, glossaryItem, actionBar) {
     const titleId = `transifex-js-dialog-title-${glossaryItem.term_id}`;
     const termText = glossaryItem.term?.trim() || "-";
-    const sourceNoteText = glossaryItem.source_comment?.trim() || "-";
-    const targetNoteText = glossaryItem.target_comment?.trim() || "-";
     const dialog = new ModelDialog({ closeOnEsc: true, closeOnOverlay: true });
     const modal = $("<div></div>").attr({
       role: "dialog",
       "aria-modal": "true",
       "aria-labelledby": titleId
     });
-    const title = $("<h3></h3>").addClass("transifex-js-modal-title").attr("id", titleId).text("Transifex-JS: Edit Glossary Term");
+    const title = $("<h3></h3>").addClass("transifex-js-modal-title").attr("id", titleId).text("Edit Glossary Term");
     const meta = $("<p></p>").addClass("transifex-js-modal-meta").text(`ID: ${glossaryItem.term_id}`);
     const table = $("<table></table>").addClass("transifex-js-modal-table");
     const body = $("<tbody></tbody>");
@@ -361,62 +434,38 @@ This action is cannot be undone.`
         });
       }
     });
-    const clearSourceNoteButton = $('<button type="button"></button>').append(icon("clear", 24)).append("<span>Clear</span>").addClass("transifex-js-button transifex-js-button-danger").on("click", () => {
-      if (confirm(
-        `Sure to delete the note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`
-      )) {
-        const oldSourceComment = glossaryItem.source_comment;
-        editGlossaryNote(glossaryItem.term_id, "", () => {
-          glossaryItem.source_comment = "";
-          itemDiv.find("p").each((_idx, p) => {
-            const pElement = $(p);
-            if (oldSourceComment && pElement.text() === oldSourceComment) {
-              pElement.css({
-                textDecoration: "line-through",
-                color: "#88888888"
-              });
-            }
-          });
-          closeModal();
+    const sourceNoteRow = createNoteRow(
+      "Source Note",
+      glossaryItem.source_comment,
+      (newValue, callback) => {
+        const oldVal = glossaryItem.source_comment;
+        editGlossaryNote(glossaryItem.term_id, newValue, () => {
+          glossaryItem.source_comment = newValue;
+          updateItemDivText(itemDiv, oldVal, newValue);
+          callback();
         });
       }
-    });
-    const clearTargetNoteButton = $('<button type="button"></button>').append(icon("clear", 24)).append("<span>Clear</span>").addClass("transifex-js-button transifex-js-button-danger").on("click", () => {
-      if (confirm(
-        `Sure to delete the translation note of "${glossaryItem.term}" (ID: ${glossaryItem.term_id})?`
-      )) {
-        const oldTargetComment = glossaryItem.target_comment;
-        editGlossaryTranslationNote(glossaryItem.term_id, "", () => {
-          glossaryItem.target_comment = "";
-          itemDiv.find("p").each((_idx, p) => {
-            const pElement = $(p);
-            if (oldTargetComment && pElement.text() === oldTargetComment) {
-              pElement.css({
-                textDecoration: "line-through",
-                color: "#88888888"
-              });
-            }
-          });
-          closeModal();
+    );
+    const targetNoteRow = createNoteRow(
+      "Translation Note",
+      glossaryItem.target_comment,
+      (newValue, callback) => {
+        const oldVal = glossaryItem.target_comment;
+        editGlossaryTranslationNote(glossaryItem.term_id, newValue, () => {
+          glossaryItem.target_comment = newValue;
+          updateItemDivText(itemDiv, oldVal, newValue);
+          callback();
         });
       }
-    });
+    );
     body.append(
       $("<tr></tr>").append(
         $("<th></th>").text("Term"),
         $("<td></td>").text(termText),
-        $("<td></td>").addClass("transifex-js-modal-action-cell").append(deleteTermButton)
+        $("<td></td>").addClass("transifex-js-modal-action-cell").css("white-space", "nowrap").append(deleteTermButton)
       ),
-      $("<tr></tr>").append(
-        $("<th></th>").text("Source Note"),
-        $("<td></td>").text(sourceNoteText),
-        $("<td></td>").addClass("transifex-js-modal-action-cell").append(clearSourceNoteButton)
-      ),
-      $("<tr></tr>").append(
-        $("<th></th>").text("Translation Note"),
-        $("<td></td>").text(targetNoteText),
-        $("<td></td>").addClass("transifex-js-modal-action-cell").append(clearTargetNoteButton)
-      )
+      sourceNoteRow,
+      targetNoteRow
     );
     table.append(body);
     modal.append(title, meta, table);
@@ -447,14 +496,16 @@ This action is cannot be undone.`
     if (glossaryItem.deleted) {
       return;
     }
-    itemDiv.css("position", "relative");
     const firstChild = itemDiv.children().first();
     if (firstChild.length) {
+      firstChild.css("position", "relative");
       firstChild.get(0).style.setProperty(
         "padding-bottom",
         "24px",
         "important"
       );
+    } else {
+      itemDiv.css("position", "relative");
     }
     const actionBar = $("<div></div>").addClass("transifex-js-glossary-item-injection transifex-js-close-to-show").css({
       position: "absolute",
@@ -467,7 +518,11 @@ This action is cannot be undone.`
       showGlossaryModal(itemDiv, glossaryItem, actionBar);
     });
     actionBar.append(editButton);
-    itemDiv.prepend(actionBar);
+    if (firstChild.length) {
+      firstChild.append(actionBar);
+    } else {
+      itemDiv.prepend(actionBar);
+    }
   }
   function injectGlossaryArea() {
     const itemDivs = findGlossaryItemDivs();
