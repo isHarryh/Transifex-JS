@@ -1,3 +1,10 @@
+## v0.4.0 (2026-03-25)
+
+### Features
+
+- Supports **edit glossary note directly** in the glossary term edit dialog.
+- Enhances dialog style.
+
 ## v0.3.0 (2026-03-24)
 
 ### Features
