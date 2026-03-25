@@ -266,14 +266,16 @@ function injectGlossaryItem(itemDiv: any, glossaryItem: GlossaryItem) {
     return;
   }
 
-  itemDiv.css("position", "relative");
   const firstChild = itemDiv.children().first();
   if (firstChild.length) {
+    firstChild.css("position", "relative");
     (firstChild.get(0) as HTMLElement).style.setProperty(
       "padding-bottom",
       "24px",
       "important",
     );
+  } else {
+    itemDiv.css("position", "relative");
   }
 
   const actionBar = $("<div></div>")
@@ -295,7 +297,11 @@ function injectGlossaryItem(itemDiv: any, glossaryItem: GlossaryItem) {
     });
 
   actionBar.append(editButton);
-  itemDiv.prepend(actionBar);
+  if (firstChild.length) {
+    firstChild.append(actionBar);
+  } else {
+    itemDiv.prepend(actionBar);
+  }
 }
 
 function injectGlossaryArea() {
